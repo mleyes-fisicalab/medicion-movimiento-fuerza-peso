@@ -1,0 +1,16 @@
+Cuaderno interactivo · Instrumentación Industrial · Universidad del Valle, sede Cartago
+
+Suba la carpeta completa al servidor y abra index.html. No depende de internet:
+las librerías (jsPDF, AutoTable, MathJax) y las fuentes están incluidas.
+
+index.html            página del cuaderno
+css/estilos.css       estilos
+css/fuentes.css       declaración de las fuentes locales
+fonts/                Fraunces, Manrope y JetBrains Mono (woff2)
+js/core.js            utilidades, plano cartesiano y motor de páginas
+js/app.js             simuladores, laboratorio virtual, ejercicios e informe PDF
+js/mathjax-config.js  configuración de MathJax
+js/lib/               jspdf.umd.min.js, jspdf.plugin.autotable.min.js, tex-svg.js
+img/                  logo del cuaderno y favicon
+
+Los datos de los estudiantes se guardan en el navegador (localStorage) de cada equipo.

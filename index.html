@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Cuaderno interactivo de Instrumentación Industrial: posición, velocidad, fuerza, torque y peso con LVDT, encoders, galgas extensiométricas y celdas de carga, y actuadores. Universidad del Valle, sede Cartago.">
+<title>Movimiento, Fuerza y Peso Interactivo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="author" content="Dra. María Elena Leyes">
+<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/fuentes.css">
+<link rel="stylesheet" href="css/estilos.css">
+
+</head>
+<body>
+<div class="aurora" aria-hidden="true"></div>
+<div class="app">
+<aside class="side" id="side" aria-label="Índice del cuaderno">
+  <div class="side-in">
+    <div class="brand">
+      <span class="uv">Universidad del Valle</span>
+      <div class="mark">
+        <img src="img/logo-movimiento.svg" alt="" width="34" height="34">
+        <b>Movimiento,<br>Fuerza y Peso</b>
+      </div>
+      <small>Instrumentación Industrial · 2026-2</small>
+    </div>
+    <nav class="toc" id="toc"></nav>
+    <div class="side-foot">Dra. María Elena Leyes<br>Universidad del Valle · Sede Cartago</div>
+  </div>
+</aside>
+<div class="scrim" id="scrim" hidden></div>
+
+<div class="main">
+  <header class="top">
+    <button class="ibtn menu-btn" id="menuBtn" aria-label="Abrir índice"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <div class="where"><small id="secName">Presentación</small><b id="pageName">Portada</b></div>
+    <span class="count" id="count">1 / 20</span>
+    <button class="ibtn" id="prevBtn" aria-label="Página anterior"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <button class="ibtn" id="nextBtn" aria-label="Página siguiente"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+    <button class="ibtn" id="themeBtn" aria-label="Cambiar tema claro u oscuro"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></button>
+    <div class="progress"><i id="prog"></i></div>
+  </header>
+
+  <div class="book" id="book">
+<!-- ================= PORTADA ================= -->
+<section class="page" id="portada" data-sec="Presentación" data-title="Portada">
+  <div class="hero">
+    <p class="eyebrow">Universidad del Valle · Sede Cartago · Tecnología en Electrónica</p>
+    <h1>Posición, velocidad, fuerza y peso, <em>y los actuadores que mueven el proceso</em></h1>
+    <p class="lead">Cuaderno interactivo de prácticas experimentales para Instrumentación Industrial. Recorre los sensores de movimiento (potenciómetro, LVDT, encoder, tacogenerador), los de fuerza, torque y peso (galgas extensiométricas y celdas de carga) y los actuadores que cierran el lazo.</p>
+    <div class="sensors">
+      <div class="sensor" style="--c:var(--c-rtd)"><h3>Encoder incremental</h3><div class="k">4 × PPR</div><div class="u">cuentas por vuelta al decodificar en cuadratura los flancos de A y B</div></div>
+      <div class="sensor" style="--c:var(--c-tc)"><h3>Galga extensiométrica</h3><div class="k">GF ≈ 2</div><div class="u">ΔR/R = GF · ε · 1000 µε cambian 0,2 % la resistencia</div></div>
+      <div class="sensor" style="--c:var(--c-ntc)"><h3>Celda de carga</h3><div class="k">2 mV/V</div><div class="u">salida a capacidad nominal · 8,6 mV con 4,3 V de excitación</div></div>
+    </div>
+    <h2>Ruta del cuaderno</h2>
+    <div class="route" id="route"></div>
+    <div class="byline">
+      <div><b>Autora</b>Dra. María Elena Leyes</div>
+      <div><b>Asignatura</b>Instrumentación Industrial</div>
+      <div><b>Programa</b>Tecnología en Electrónica</div>
+      <div><b>Periodo</b>Agosto – diciembre 2026</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= GUÍA ================= -->
+<section class="page" id="guia" data-sec="Presentación" data-title="Guía de la práctica" hidden>
+  <p class="eyebrow">Guía de laboratorio</p>
+  <h1>Sensores de movimiento, fuerza y peso</h1>
+  <p class="lead">La práctica es una <strong>estación electiva</strong>: cada equipo hace la práctica que más se relaciona con su proyecto (movimiento: prácticas 1 y 2; fuerza y peso: práctica 3), y puede hacer las demás como complemento. El laboratorio virtual asigna a cada estudiante un banco con sensores propios.</p>
+  <h2>Objetivo general</h2>
+  <p>Caracterizar sensores de posición, velocidad y peso usados en la industria, leerlos con un microcontrolador y relacionarlos con los actuadores y la señal de mando que cierran el lazo de control.</p>
+  <h2>Objetivos específicos</h2>
+  <ol>
+    <li>Calibrar un LVDT con un micrómetro, determinar su sensibilidad y su rango lineal.</li>
+    <li>Determinar la resolución de un encoder incremental y comparar la medición de velocidad por frecuencia y por período.</li>
+    <li>Analizar el puente de Wheatstone con una, dos y cuatro galgas, y el efecto de la temperatura.</li>
+    <li>Calibrar una celda de carga leída con un HX711 y evaluar su no linealidad y su histéresis.</li>
+    <li>Relacionar cada actuador (motor con variador, servomotor, válvula neumática, electroválvula) con su señal de mando y redactar un informe técnico en PDF.</li>
+  </ol>
+  <h2>Equipos de referencia</h2>
+  <p>El laboratorio virtual reproduce este montaje. Si la sede cuenta con los equipos, la misma guía sirve para la práctica presencial.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Equipo</th><th>Especificación sugerida</th><th>Uso</th></tr></thead>
+    <tbody>
+      <tr><td>LVDT</td><td>±25 mm, excitación 3 V rms a 2,5 kHz, con acondicionador AD598 o AD698</td><td>Práctica 1</td></tr>
+      <tr><td>Micrómetro de desplazamiento</td><td>0–50 mm, resolución 0,01 mm</td><td>Práctica 1</td></tr>
+      <tr><td>Encoder incremental</td><td>Salidas A y B en cuadratura (100 a 1000 PPR), 5 V</td><td>Práctica 2</td></tr>
+      <tr><td>Motor DC y tacómetro óptico</td><td>Motor de 12 V con controlador PWM; tacómetro patrón de 0,1 rpm</td><td>Práctica 2</td></tr>
+      <tr><td>Celda de carga</td><td>Tipo barra de 20 kg, 2 mV/V, cuatro hilos</td><td>Práctica 3</td></tr>
+      <tr><td>Convertidor HX711</td><td>ADC de 24 bits, ganancia 128, excitación de 4,3 V</td><td>Práctica 3</td></tr>
+      <tr><td>Juego de masas patrón</td><td>0,5 a 20 kg, clase M1</td><td>Práctica 3</td></tr>
+      <tr><td>Microcontrolador</td><td>Arduino UNO o ESP32 (contador de pulsos PCNT para el encoder)</td><td>Prácticas 2 y 3</td></tr>
+    </tbody>
+  </table></div>
+  <h2>Metodología</h2>
+  <ol class="steps">
+    <li><strong>Antes de la sesión.</strong> Lee las secciones de tu estación y explora sus simuladores. Responde las preguntas orientadoras.</li>
+    <li><strong>Durante la sesión.</strong> Identifícate en el laboratorio virtual con tu código estudiantil. Ese código define tu banco.</li>
+    <li><strong>Registro.</strong> Toma las lecturas que pide cada práctica, ejecuta el análisis y escribe tu interpretación.</li>
+    <li><strong>Después de la sesión.</strong> Resuelve los ejercicios y descarga el informe en PDF. Las prácticas que no hagas aparecen como pendientes y no restan si no son de tu estación.</li>
+  </ol>
+  <div class="callout warn"><b>Seguridad</b><p>En la práctica presencial, no toques ejes en movimiento ni acoples sin guarda. No sobrecargues la celda de carga más allá del 150 % de su capacidad: se deforma de manera permanente. Coloca las masas sin golpes.</p></div>
+</section>
+
+<!-- ================= CADENA ================= -->
+<section class="page" id="cadena" data-sec="I · Fundamentos" data-title="Lazo de peso y variador" hidden>
+  <p class="eyebrow">Sección I · Fundamentos</p>
+  <h1>Del peso de la tolva a la velocidad del tornillo</h1>
+  <p class="lead">En una dosificación por pérdida de peso, una tolva cuelga de celdas de carga y un tornillo sinfín, movido por un motor con variador de frecuencia, descarga el producto. El controlador ajusta la velocidad del tornillo para que el peso baje al ritmo programado.</p>
+  <h2>Recorrido de la señal</h2>
+  <p>Mueve el peso de la tolva. Las celdas suman 2 mV/V a 500 kg con 10 V de excitación; el transmisor WT-501 está calibrado de 0 a 500 kg; el controlador WIC-501 compara con la consigna de 300 kg y manda el variador SC-501 de 0 a 60 Hz. Toca cada bloque para ver su función.</p>
+  <div class="card">
+    <div class="ctrl"><label for="ch-T">Peso en la tolva <output id="ch-To"></output></label><input type="range" id="ch-T" min="0" max="500" step="1" value="360"></div>
+    <div class="chain" id="chain">
+      <button class="node on" data-i="0"><span class="tagisa">Proceso</span><b>Tolva dosificadora</b><span class="val" id="ch-v0">—</span></button>
+      <button class="node" data-i="1"><span class="tagisa">WE-501</span><b>Celdas de carga</b><span class="val" id="ch-v1">—</span></button>
+      <button class="node" data-i="2"><span class="tagisa">WT-501</span><b>Transmisor 4–20 mA</b><span class="val" id="ch-v2">—</span></button>
+      <button class="node" data-i="3"><span class="tagisa">WIC-501</span><b>Indicador y controlador</b><span class="val" id="ch-v3">—</span></button>
+      <button class="node" data-i="4"><span class="tagisa">SC-501 · M</span><b>Variador y motor</b><span class="val" id="ch-v4">—</span></button>
+    </div>
+    <p id="ch-desc" class="muted" style="margin:0"></p>
+  </div>
+  <div class="callout"><b>Para el informe</b><p>Dibuja el P&amp;ID con la simbología ISA-5.1: WE y WT-501 en la tolva, WIC-501 en sala de control, el control de velocidad SC-501 y el motor del tornillo. Indica el tipo de señal en cada línea.</p></div>
+</section>
+
+<!-- ================= POSICIÓN ================= -->
+<section class="page" id="posicion" data-sec="II · Posición" data-title="Sensores de posición" hidden>
+  <p class="eyebrow">Sección II · Posición</p>
+  <h1>Potenciómetro, LVDT y encoder absoluto</h1>
+  <p class="lead">Medir posición es medir dónde está algo: el vástago de una válvula, la compuerta de un silo, el carro de una máquina o el eje de un robot. Se distinguen los sensores lineales y los angulares, y los absolutos (saben dónde están al encender) de los incrementales (cuentan desde una referencia).</p>
+  <div class="grid3">
+    <div class="card"><h3 style="margin-top:0">Potenciómetro</h3><p>Un cursor recorre una pista resistiva: \(V_o = V_{cc}\,x/L\). Simple y absoluto, pero se desgasta por el contacto y su carga eléctrica introduce no linealidad.</p></div>
+    <div class="card"><h3 style="margin-top:0">LVDT</h3><p>Transformador con un primario y dos secundarios en oposición. Un núcleo ferromagnético sin contacto reparte el acoplamiento: la diferencia de tensiones es proporcional al desplazamiento, y la fase indica el sentido.</p></div>
+    <div class="card"><h3 style="margin-top:0">Encoder absoluto</h3><p>Un disco con varias pistas codificadas en código Gray da una palabra digital única por posición. Con 12 pistas resuelve 360°/4096 = 0,088°.</p></div>
+  </div>
+  <h2>El LVDT</h2>
+  <div class="formula">\[ V_o = V_1 - V_2 = S\,V_{exc}\,x \qquad\qquad V_{\text{dem}} = |V_o|\,\operatorname{signo}(\cos\varphi) \]<small>\(S\): sensibilidad en mV/V por mm · \(V_{exc}\): excitación del primario (1 a 10 kHz) · \(\varphi\): fase entre \(V_o\) y la excitación (0° a un lado del cero, 180° al otro). Un demodulador sensible a la fase (AD598, AD698) entrega una tensión DC con signo.</small></div>
+  <p>Cerca de los extremos del recorrido, el núcleo empieza a salir de los secundarios y la salida se curva. La hoja de datos especifica el rango en el que la no linealidad es menor que un porcentaje del fondo de escala, típicamente ±0,25 a ±0,5 %.</p>
+  <div class="callout"><b>Pregunta</b><p>¿Por qué un voltímetro de AC conectado a la salida del LVDT no puede distinguir +5 mm de −5 mm? ¿Qué ventaja tiene el LVDT frente al potenciómetro en una máquina que trabaja millones de ciclos?</p></div>
+</section>
+
+<!-- ================= SIM LVDT ================= -->
+<section class="page" id="simlvdt" data-sec="II · Posición" data-title="Simulador de LVDT" hidden>
+  <p class="eyebrow">Sección II · Simulador</p>
+  <h1>Secundarios, salida y demodulación del LVDT</h1>
+  <p class="lead">Desplaza el núcleo y observa las tensiones de los secundarios, su diferencia y la salida demodulada. Compara la salida en amplitud (sin fase) con la salida demodulada.</p>
+  <div class="sim">
+    <div class="card ctrls">
+      <div class="ctrl"><label for="lv-x">Desplazamiento del núcleo <output id="lv-xo"></output></label><input type="range" id="lv-x" min="-25" max="25" step="0.1" value="6"></div>
+      <div class="ctrl"><label for="lv-S">Sensibilidad S <output id="lv-So"></output></label><input type="range" id="lv-S" min="10" max="80" step="1" value="30"></div>
+      <div class="ctrl"><label for="lv-V">Excitación <output id="lv-Vo"></output></label><input type="range" id="lv-V" min="1" max="7" step="0.1" value="3"></div>
+      <div class="ctrl"><label for="lv-n">No linealidad en ±15 mm <output id="lv-no"></output></label><input type="range" id="lv-n" min="0.1" max="1.5" step="0.05" value="0.5"></div>
+    </div>
+    <div class="stack" style="min-width:0"><div class="kpis" id="lv-k"></div><div class="card svgbox"><div id="lv-svg"></div></div></div>
+  </div>
+  <div id="lv-plot"></div>
+</section>
+
+<!-- ================= VELOCIDAD ================= -->
+<section class="page" id="velocidad" data-sec="III · Velocidad" data-title="Encoder y tacogenerador" hidden>
+  <p class="eyebrow">Sección III · Velocidad</p>
+  <h1>Encoder incremental y tacogenerador</h1>
+  <p class="lead">La velocidad de un eje se mide con un tacogenerador (una tensión proporcional a la velocidad) o con un encoder incremental (pulsos que se cuentan o se cronometran). El encoder domina hoy porque la misma señal da posición, sentido y velocidad.</p>
+  <div class="grid2">
+    <div class="card"><h3 style="margin-top:0">Tacogenerador</h3><p>Un pequeño generador de imán permanente: \(V = k_t\,n\), con \(k_t\) del orden de 7 V por cada 1000 rpm. Analógico y continuo, pero con rizado de escobillas y deriva térmica.</p></div>
+    <div class="card"><h3 style="margin-top:0">Encoder incremental</h3><p>Un disco con N ranuras (PPR) produce dos señales A y B desfasadas 90°. El canal que adelanta indica el sentido; contando los cuatro flancos se obtienen \(4N\) cuentas por vuelta. Un canal Z da un pulso de referencia por vuelta.</p></div>
+  </div>
+  <h2>Dos maneras de medir la velocidad</h2>
+  <div class="formula">\[ \text{Frecuencia: } n = \frac{60\,N_c}{4\,\text{PPR}\;T} \qquad \Delta n = \frac{60}{4\,\text{PPR}\;T} \qquad\qquad \text{Período: } n = \frac{60}{\text{PPR}\;t_p} \qquad \frac{\Delta n}{n} = \frac{\text{PPR}\;n}{60\,f_{clk}} \]<small>\(N_c\): cuentas en la ventana \(T\) · \(t_p\): período de la señal A medido con un reloj \(f_{clk}\). El método de frecuencia es malo a baja velocidad (pocas cuentas) y el de período es malo a alta velocidad (pocos ciclos de reloj). Se cruzan en \(n_c = 60\sqrt{f_{clk}/(4\,\text{PPR}^2\,T)}\).</small></div>
+  <div class="callout"><b>Pregunta</b><p>Un motor gira a 20 rpm con un encoder de 500 PPR. ¿Cuántas cuentas entran en una ventana de 10 ms? ¿Qué método usarías para controlarlo?</p></div>
+</section>
+
+<!-- ================= SIM ENCODER ================= -->
+<section class="page" id="simenc" data-sec="III · Velocidad" data-title="Simulador de encoder" hidden>
+  <p class="eyebrow">Sección III · Simulador</p>
+  <h1>Cuadratura y resolución del encoder</h1>
+  <p class="lead">Cambia el sentido de giro y observa cuál canal adelanta. Luego compara la resolución de los métodos de frecuencia y de período para la velocidad y la ventana elegidas.</p>
+  <div class="sim">
+    <div class="card ctrls">
+      <div class="ctrl"><label>Sentido de giro</label><div class="seg" id="en-d"><button data-v="1" class="on">Horario</button><button data-v="-1">Antihorario</button></div></div>
+      <div class="ctrl"><label for="en-p">Pulsos por vuelta PPR <output id="en-po"></output></label><input type="range" id="en-p" min="20" max="2500" step="10" value="500"></div>
+      <div class="ctrl"><label for="en-n">Velocidad <output id="en-no"></output></label><input type="range" id="en-n" min="1" max="3000" step="1" value="120"></div>
+      <div class="ctrl"><label for="en-T">Ventana de conteo T <output id="en-To"></output></label><input type="range" id="en-T" min="1" max="1000" step="1" value="10"></div>
+      <div class="ctrl"><label for="en-c">Reloj del temporizador <output id="en-co"></output></label><input type="range" id="en-c" min="0.5" max="80" step="0.5" value="1"></div>
+    </div>
+    <div class="stack" style="min-width:0"><div class="kpis" id="en-k"></div><div class="card svgbox"><div id="en-svg"></div></div></div>
+  </div>
+  <div id="en-plot"></div>
+</section>
+
+<!-- ================= FUERZA ================= -->
+<section class="page" id="fuerza" data-sec="IV · Fuerza y peso" data-title="Galgas, puente y torque" hidden>
+  <p class="eyebrow">Sección IV · Fuerza, torque y peso</p>
+  <h1>Galgas extensiométricas y puente de Wheatstone</h1>
+  <p class="lead">Una galga es una rejilla metálica pegada a una pieza. Cuando la pieza se deforma, la rejilla se alarga o se acorta y su resistencia cambia en proporción a la deformación unitaria \(\varepsilon\). Los cambios son minúsculos: hay que medirlos con un puente.</p>
+  <div class="formula">\[ \frac{\Delta R}{R} = GF\,\varepsilon \qquad\qquad \varepsilon = \frac{\sigma}{E} = \frac{F}{A\,E} \]<small>\(GF\): factor de galga (≈ 2 en galgas metálicas) · \(\varepsilon\) se expresa en microdeformaciones (µε = 10⁻⁶). Una galga de 350 Ω a 1000 µε cambia apenas 0,7 Ω.</small></div>
+  <h2>Configuraciones del puente</h2>
+  <div class="formula">\[ \text{Cuarto: } \frac{V_o}{V_{exc}} = \frac{GF\,\varepsilon/4}{1 + GF\,\varepsilon/2} \qquad \text{Medio: } \frac{V_o}{V_{exc}} = \frac{GF\,\varepsilon}{2} \qquad \text{Completo: } \frac{V_o}{V_{exc}} = GF\,\varepsilon \]<small>Medio puente: dos galgas activas en ramas adyacentes, una a tracción y otra a compresión. Completo: cuatro galgas activas. Las configuraciones con galgas en ramas adyacentes cancelan el efecto de la temperatura porque ambas cambian igual.</small></div>
+  <h2>Celdas de carga y torque</h2>
+  <div class="grid2">
+    <div class="card"><h3 style="margin-top:0">Celda de carga</h3><p>Un cuerpo elástico (viga, columna, anillo, tipo S) con cuatro galgas en puente completo, compensado en temperatura. Su sensibilidad se da en mV/V a capacidad nominal: una celda de 20 kg y 2 mV/V excitada con 5 V entrega 10 mV a 20 kg.</p></div>
+    <div class="card"><h3 style="margin-top:0">Torquímetro</h3><p>En un eje sometido a torque \(T\), las deformaciones máximas aparecen a ±45° del eje: \(\varepsilon_{45} = \dfrac{T}{\pi G\,d^3/16}\cdot\dfrac12\). Cuatro galgas a ±45° en puente completo miden el torque e ignoran la flexión y la carga axial.</p></div>
+  </div>
+  <div class="callout"><b>Pregunta</b><p>¿Por qué una celda de carga nunca se arma con una sola galga en cuarto de puente? ¿Qué pasa con la lectura de una báscula al sol si su celda no está compensada?</p></div>
+</section>
+
+<!-- ================= SIM PUENTE ================= -->
+<section class="page" id="simpuente" data-sec="IV · Fuerza y peso" data-title="Simulador de puente" hidden>
+  <p class="eyebrow">Sección IV · Simulador</p>
+  <h1>Puente de Wheatstone con galgas</h1>
+  <p class="lead">Elige la configuración y aplica deformación y cambios de temperatura. Las galgas no compensadas tienen una deformación aparente de 6 µε por °C.</p>
+  <div class="sim">
+    <div class="card ctrls">
+      <div class="ctrl"><label>Configuración</label><div class="seg" id="br-c"><button data-v="1" class="on">Cuarto</button><button data-v="2">Medio</button><button data-v="4">Completo</button></div></div>
+      <div class="ctrl"><label for="br-e">Deformación ε <output id="br-eo"></output></label><input type="range" id="br-e" min="-3000" max="3000" step="10" value="800"></div>
+      <div class="ctrl"><label for="br-g">Factor de galga GF <output id="br-go"></output></label><input type="range" id="br-g" min="1.8" max="2.2" step="0.01" value="2.05"></div>
+      <div class="ctrl"><label for="br-v">Excitación <output id="br-vo"></output></label><input type="range" id="br-v" min="1" max="10" step="0.1" value="5"></div>
+      <div class="ctrl"><label for="br-t">Cambio de temperatura ΔT <output id="br-to"></output></label><input type="range" id="br-t" min="-20" max="40" step="1" value="0"></div>
+    </div>
+    <div class="stack" style="min-width:0"><div class="kpis" id="br-k"></div><div class="card svgbox"><div id="br-svg"></div></div></div>
+  </div>
+  <div id="br-plot"></div>
+</section>
+
+<!-- ================= SIM CELDA ================= -->
+<section class="page" id="simcelda" data-sec="IV · Fuerza y peso" data-title="Celda de carga con HX711" hidden>
+  <p class="eyebrow">Sección IV · Simulador</p>
+  <h1>De la celda de carga al número en el microcontrolador</h1>
+  <p class="lead">El HX711 integra un amplificador de ganancia 128 y un convertidor sigma-delta de 24 bits. Su entrada diferencial cubre ±0,5·AVDD/ganancia: con 4,3 V son ±16,8 mV. Escoge la celda y la carga, y observa las cuentas, la resolución y la señal escalada a 4–20 mA.</p>
+  <div class="formula">\[ V_{in} = \text{RO}\cdot V_{exc}\cdot\frac{m}{C} \qquad N = \frac{V_{in}}{0{,}5\,V_{exc}/G}\cdot 2^{23} \qquad m = \frac{N - N_0}{\text{factor}} \]<small>RO: salida nominal (mV/V) · \(C\): capacidad · \(G\): ganancia del HX711 · \(N_0\): cuentas en vacío (tara).</small></div>
+  <div class="sim">
+    <div class="card ctrls">
+      <div class="ctrl"><label for="hx-C">Capacidad de la celda <output id="hx-Co"></output></label><input type="range" id="hx-C" min="1" max="500" step="1" value="20"></div>
+      <div class="ctrl"><label for="hx-r">Salida nominal RO <output id="hx-ro"></output></label><input type="range" id="hx-r" min="0.5" max="3" step="0.05" value="2"></div>
+      <div class="ctrl"><label for="hx-v">Excitación AVDD <output id="hx-vo"></output></label><input type="range" id="hx-v" min="2.6" max="5" step="0.1" value="4.3"></div>
+      <div class="ctrl"><label>Ganancia del HX711</label><div class="seg" id="hx-g"><button data-v="128" class="on">128</button><button data-v="64">64</button></div></div>
+      <div class="ctrl"><label for="hx-m">Carga <output id="hx-mo"></output></label><input type="range" id="hx-m" min="0" max="100" step="0.5" value="40"></div>
+    </div>
+    <div class="stack" style="min-width:0"><div class="kpis" id="hx-k"></div><div id="hx-plot"></div></div>
+  </div>
+  <div class="callout"><b>Pregunta</b><p>¿Por qué una celda de 500 kg leída con el mismo HX711 resuelve menos gramos que una de 20 kg? Calcula la resolución estable en gramos si el ruido del HX711 es de 50 nV rms.</p></div>
+</section>
+
+<!-- ================= ACTUADORES ================= -->
+<section class="page" id="actuadores" data-sec="V · Actuadores" data-title="Actuadores y cadena de mando" hidden>
+  <p class="eyebrow">Sección V · Actuadores</p>
+  <h1>Actuadores y su señal de mando</h1>
+  <p class="lead">El actuador es el elemento que convierte la decisión del controlador en energía mecánica. Cada tipo recibe una señal de mando distinta y tiene una acción segura propia cuando la señal o la energía se pierden.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Actuador</th><th>Señal de mando</th><th>Elemento intermedio</th><th>Variable que regula</th><th>Acción segura</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Válvula neumática</strong></td><td>4–20 mA</td><td>Convertidor I/P (3–15 psi) y posicionador</td><td>Caudal</td><td>Resorte: FC o FO</td></tr>
+      <tr><td><strong>Motor de inducción</strong></td><td>4–20 mA, 0–10 V o bus de campo</td><td>Variador de frecuencia (VFD)</td><td>Velocidad de bombas, bandas, tornillos</td><td>Parada por rampa o por inercia</td></tr>
+      <tr><td><strong>Motor DC</strong></td><td>PWM</td><td>Puente H o controlador</td><td>Velocidad y sentido</td><td>Freno dinámico</td></tr>
+      <tr><td><strong>Servomotor</strong></td><td>Pulsos de posición o bus (EtherCAT, PROFINET)</td><td>Servodrive con encoder</td><td>Posición y velocidad</td><td>Freno de retención</td></tr>
+      <tr><td><strong>Electroválvula</strong></td><td>Digital 24 V DC</td><td>Relé o relé de estado sólido (SSR)</td><td>Paso todo o nada</td><td>Normalmente cerrada o abierta</td></tr>
+      <tr><td><strong>Resistencia calefactora</strong></td><td>Digital por ciclos o fase</td><td>SSR o tiristores</td><td>Potencia térmica</td><td>Desenergizada</td></tr>
+      <tr><td><strong>Cilindro neumático</strong></td><td>Digital 24 V DC</td><td>Electroválvula 5/2</td><td>Posición de dos estados</td><td>Según la válvula (monoestable o biestable)</td></tr>
+    </tbody>
+  </table></div>
+  <h2>El motor de inducción con variador</h2>
+  <div class="formula">\[ n_s = \frac{120\,f}{p} \qquad n = n_s\,(1 - s) \qquad \frac{V}{f} = \text{constante} \qquad v_{\text{banda}} = \frac{n}{i}\cdot\frac{\pi D}{60} \]<small>\(p\): número de polos · \(s\): deslizamiento (2 a 5 %) · \(i\): relación de reducción · \(D\): diámetro del tambor. El variador mantiene V/f constante para conservar el par.</small></div>
+  <div class="sim">
+    <div class="card ctrls">
+      <div class="ctrl"><label for="vf-I">Señal del controlador <output id="vf-Io"></output></label><input type="range" id="vf-I" min="4" max="20" step="0.1" value="15"></div>
+      <div class="ctrl"><label>Polos del motor</label><div class="seg" id="vf-p"><button data-v="2">2</button><button data-v="4" class="on">4</button><button data-v="6">6</button></div></div>
+      <div class="ctrl"><label for="vf-s">Deslizamiento <output id="vf-so"></output></label><input type="range" id="vf-s" min="0" max="8" step="0.1" value="3"></div>
+      <div class="ctrl"><label for="vf-i">Reducción i <output id="vf-io"></output></label><input type="range" id="vf-i" min="1" max="60" step="1" value="20"></div>
+      <div class="ctrl"><label for="vf-D">Diámetro del tambor <output id="vf-Do"></output></label><input type="range" id="vf-D" min="0.1" max="1" step="0.01" value="0.3"></div>
+    </div>
+    <div class="kpis" id="vf-k" style="align-content:start"></div>
+  </div>
+  <div class="callout"><b>Para el proyecto</b><p>Si tu lazo crítico termina en un motor, escribe su cadena de mando completa: controlador, señal, variador o drive, motor, reducción y variable regulada. Indica qué ocurre si se pierde la señal y si eso es seguro para tu proceso.</p></div>
+</section>
+
+<!-- ================= COMPARA ================= -->
+<section class="page" id="compara" data-sec="V · Actuadores" data-title="Comparación y selección" hidden>
+  <p class="eyebrow">Criterios de selección</p>
+  <h1>¿Qué sensor elegir?</h1>
+  <p class="lead">La selección depende del rango, de la resolución, de si la medición debe ser absoluta, del ambiente (polvo, vibración, temperatura) y de la vida útil esperada.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Sensor</th><th>Mide</th><th>Contacto</th><th>Resolución típica</th><th>Absoluto</th><th>Costo</th></tr></thead>
+    <tbody>
+      <tr><td>Potenciómetro</td><td>Posición lineal o angular</td><td>Sí</td><td>0,1 % del recorrido</td><td>Sí</td><td>Muy bajo</td></tr>
+      <tr><td>LVDT</td><td>Posición lineal</td><td>No</td><td>Casi infinita (µm)</td><td>Sí</td><td>Medio</td></tr>
+      <tr><td>Encoder incremental</td><td>Ángulo, velocidad</td><td>No</td><td>360°/(4·PPR)</td><td>No</td><td>Bajo a medio</td></tr>
+      <tr><td>Encoder absoluto</td><td>Ángulo</td><td>No</td><td>12 a 25 bits</td><td>Sí</td><td>Medio a alto</td></tr>
+      <tr><td>Tacogenerador</td><td>Velocidad</td><td>Escobillas</td><td>Analógica</td><td>—</td><td>Medio</td></tr>
+      <tr><td>Celda de carga</td><td>Fuerza, peso</td><td>Sí</td><td>1/3000 a 1/10 000 de la capacidad</td><td>Sí</td><td>Bajo a medio</td></tr>
+    </tbody>
+  </table></div>
+  <h2>Casos de selección</h2>
+  <p>Elige el sensor que recomendarías y compara tu criterio con la justificación.</p>
+  <div class="scen" id="scen"></div>
+</section>
+
+<!-- ================= LAB ID ================= -->
+<section class="page" id="labid" data-sec="VI · Laboratorio virtual" data-title="Ingreso al laboratorio" hidden>
+  <p class="eyebrow">Sección VI · Laboratorio virtual</p>
+  <h1>Ingreso al laboratorio</h1>
+  <p class="lead">Tu código estudiantil asigna un banco. Cada banco tiene un LVDT con su propia sensibilidad y centrado, un encoder de resolución desconocida y una celda de carga con su salida nominal, su no linealidad y su histéresis.</p>
+  <div class="grid2">
+    <div class="card ctrls">
+      <div class="ctrl"><label for="id-name">Nombre completo</label><input type="text" id="id-name" placeholder="Ej.: María Fernanda Ríos Gómez" autocomplete="name"></div>
+      <div class="ctrl"><label for="id-code">Código estudiantil</label><input type="text" id="id-code" placeholder="Ej.: 202458731" inputmode="numeric"></div>
+      <div class="ctrl"><label for="id-mates">Compañeros de grupo (opcional)</label><input type="text" id="id-mates" placeholder="Nombres separados por comas"></div>
+      <div class="grid2" style="gap:10px">
+        <div class="ctrl"><label for="id-group">Grupo</label><input type="text" id="id-group" placeholder="Ej.: 50"></div>
+        <div class="ctrl"><label for="id-date">Fecha</label><input type="text" id="id-date"></div>
+      </div>
+      <button class="btn gold" id="id-go">Asignar banco de medición</button>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Tu banco</h3>
+      <div id="id-bench" class="empty">Escribe tu código y pulsa «Asignar banco de medición».</div>
+      <div class="callout warn" style="margin-bottom:0"><b>Importante</b><p>Si cambias el código después de tomar datos, el banco cambia y debes repetir las lecturas. Los datos se guardan en este navegador; si cambias de equipo, empieza de nuevo.</p></div>
+    </div>
+  </div>
+  <h2>Cómo funciona el laboratorio</h2>
+  <ol class="steps">
+    <li>Fija la condición de la prueba con los controles deslizantes. Los instrumentos tardan un momento en estabilizarse.</li>
+    <li>Pulsa <strong>Registrar lectura</strong> para guardar en la tabla lo que muestran los instrumentos en ese instante.</li>
+    <li>Toma las lecturas mínimas que pide cada práctica, repartidas en todo el rango.</li>
+    <li>Pulsa <strong>Analizar datos</strong>. Se ajustan los modelos por mínimos cuadrados y se dibujan los resultados.</li>
+    <li>Escribe tu análisis en el campo de cada práctica. Todo se recopila en el informe.</li>
+  </ol>
+</section>
+
+<!-- ================= PRÁCTICA 1 ================= -->
+<section class="page" id="lab1" data-sec="VI · Laboratorio virtual" data-title="Práctica 1 · Calibración de un LVDT" hidden>
+  <p class="eyebrow">Práctica 1 · Posición · estación de movimiento</p>
+  <h1>Calibración de un LVDT con micrómetro</h1>
+  <p class="lead">El núcleo del LVDT de tu banco está unido a un micrómetro. El acondicionador lo excita con 3,0 V rms y entrega una tensión DC demodulada con signo. El centrado mecánico no es perfecto, así que el cero eléctrico no coincide con el cero del micrómetro.</p>
+  <div class="formula">\[ V = a + b\,x \qquad S = \frac{b}{V_{exc}} \qquad x_0 = -\frac{a}{b} \qquad \text{NL} = \frac{\max|V - (a + b x)|}{b\,x_{\max}}\times 100 \]</div>
+  <h3>Procedimiento</h3>
+  <ol class="steps">
+    <li>Recorre el micrómetro de −25 a +25 mm y registra al menos <strong>11 lecturas</strong> repartidas en todo el recorrido.</li>
+    <li>Analiza: se ajusta la recta en ±15 mm, se calcula la sensibilidad y el cero eléctrico, y se busca el mayor rango con no linealidad menor que 0,5 % del fondo de escala.</li>
+  </ol>
+  <div class="bench">
+    <div class="card ctrls">
+      <div class="ctrl"><label for="l1-sp">Micrómetro <output id="l1-spo"></output></label><input type="range" id="l1-sp" min="-25" max="25" step="0.5" value="-25"></div>
+      <div class="row"><button class="btn gold" id="l1-rec">Registrar lectura</button><button class="btn" id="l1-an">Analizar datos</button><button class="btn sm" id="l1-clr">Borrar tabla</button></div>
+      <div class="lcd">
+        <span class="st" id="l1-st">Estabilizando…</span>
+        <div><span>Micrómetro</span><b id="l1-d1">—</b></div>
+        <div><span>Salida demodulada</span><b id="l1-d2">—</b></div>
+        <div><span>Amplitud AC</span><b id="l1-d3">—</b></div>
+      </div>
+    </div>
+    <div class="card svgbox"><div id="l1-svg"></div></div>
+  </div>
+  <div class="tbl"><table><thead><tr><th class="num">#</th><th class="num">x (mm)</th><th class="num">V demodulada (V)</th><th></th></tr></thead><tbody id="l1-tb"></tbody></table></div>
+  <div id="l1-res" class="results"></div>
+  <h3>Preguntas orientadoras</h3>
+  <ol class="qs">
+    <li>¿Qué sensibilidad obtuviste en mV/mm y en mV/V por mm? ¿Dónde está el cero eléctrico del LVDT?</li>
+    <li>¿Cuál es la no linealidad en ±15 mm y en ±25 mm? ¿Qué rango lineal (0,5 % FS) declararías en una hoja de datos?</li>
+    <li>¿Por qué la salida se curva cerca de los extremos? Relaciónalo con la geometría de los secundarios.</li>
+    <li>Si usaras este LVDT para medir la carrera de una válvula de control de 30 mm, ¿cómo lo montarías?</li>
+  </ol>
+  <div class="ctrl"><label for="l1-txt">Análisis de resultados de la práctica 1</label><textarea id="l1-txt" placeholder="Interpreta tus resultados respondiendo las preguntas orientadoras."></textarea></div>
+</section>
+
+<!-- ================= PRÁCTICA 2 ================= -->
+<section class="page" id="lab2" data-sec="VI · Laboratorio virtual" data-title="Práctica 2 · Encoder y velocidad" hidden>
+  <p class="eyebrow">Práctica 2 · Velocidad · estación de movimiento</p>
+  <h1>Resolución de un encoder y medición de velocidad</h1>
+  <p class="lead">Un motor DC lleva acoplado un encoder incremental de resolución desconocida. Un tacómetro óptico da la velocidad patrón. El microcontrolador cuenta los cuatro flancos de A y B durante una ventana \(T\) y, por otro lado, mide el período de A con un temporizador de 1 MHz.</p>
+  <div class="formula">\[ \frac{N_c}{T} = 4\,\text{PPR}\,\frac{n}{60} \qquad n_f = \frac{60\,N_c}{4\,\text{PPR}\,T} \qquad n_p = \frac{60\times10^6}{\text{PPR}\;t_p\,[\mu s]} \]</div>
+  <h3>Procedimiento</h3>
+  <ol class="steps">
+    <li>Registra al menos <strong>10 lecturas</strong> entre 5 y 3000 rpm, con varias por debajo de 100 rpm y varias por encima de 1500 rpm.</li>
+    <li>Usa ventanas de 10 ms y de 100 ms o más para comparar.</li>
+    <li>Analiza: se obtiene la resolución del encoder (PPR) y se comparan los errores de los dos métodos de medición de velocidad.</li>
+  </ol>
+  <div class="bench">
+    <div class="card ctrls">
+      <div class="ctrl"><label for="l2-sp">Velocidad del motor <output id="l2-spo"></output></label><input type="range" id="l2-sp" min="5" max="3000" step="5" value="50"></div>
+      <div class="ctrl"><label for="l2-sp2">Ventana de conteo T <output id="l2-sp2o"></output></label><input type="range" id="l2-sp2" min="10" max="1000" step="10" value="10"></div>
+      <div class="row"><button class="btn gold" id="l2-rec">Registrar lectura</button><button class="btn" id="l2-an">Analizar datos</button><button class="btn sm" id="l2-clr">Borrar tabla</button></div>
+      <div class="lcd">
+        <span class="st" id="l2-st">Estabilizando…</span>
+        <div><span>Tacómetro</span><b id="l2-d1">—</b></div>
+        <div><span>Cuentas en T</span><b id="l2-d2">—</b></div>
+        <div><span>Período de A</span><b id="l2-d3">—</b></div>
+      </div>
+    </div>
+    <div class="card svgbox"><div id="l2-svg"></div></div>
+  </div>
+  <div class="tbl"><table><thead><tr><th class="num">#</th><th class="num">n patrón (rpm)</th><th class="num">T (ms)</th><th class="num">Cuentas</th><th class="num">Período (µs)</th><th></th></tr></thead><tbody id="l2-tb"></tbody></table></div>
+  <div id="l2-res" class="results"></div>
+  <h3>Preguntas orientadoras</h3>
+  <ol class="qs">
+    <li>¿Cuántos pulsos por vuelta tiene tu encoder? ¿Cuál es su resolución angular en cuadratura?</li>
+    <li>¿Cuál método da menos error a 20 rpm y cuál a 2500 rpm? Explica por qué con las fórmulas de resolución.</li>
+    <li>¿A qué velocidad se cruzan los dos métodos con T = 10 ms? Propón una estrategia que use el mejor método en cada zona.</li>
+    <li>Escribe el fragmento de código que calcula la velocidad con el método de período en tu microcontrolador.</li>
+  </ol>
+  <div class="ctrl"><label for="l2-txt">Análisis de resultados de la práctica 2</label><textarea id="l2-txt" placeholder="Interpreta tus resultados respondiendo las preguntas orientadoras."></textarea></div>
+</section>
+
+<!-- ================= PRÁCTICA 3 ================= -->
+<section class="page" id="lab3" data-sec="VI · Laboratorio virtual" data-title="Práctica 3 · Celda de carga" hidden>
+  <p class="eyebrow">Práctica 3 · Peso · estación de fuerza y peso</p>
+  <h1>Calibración de una celda de carga con HX711</h1>
+  <p class="lead">La celda de tu banco tiene capacidad de 20 kg y una salida nominal cercana a 2 mV/V. El HX711 la excita con 4,3 V y la lee con ganancia 128. Coloca y retira masas patrón: el banco registra si la carga venía subiendo o bajando, para medir la histéresis.</p>
+  <div class="formula">\[ N = N_0 + \text{factor}\cdot m \qquad \text{RO} = \frac{\text{factor}\cdot C}{2^{23}}\cdot\frac{0{,}5\,V_{exc}/128}{V_{exc}} \qquad \text{FS} = \text{factor}\cdot C \]</div>
+  <h3>Procedimiento</h3>
+  <ol class="steps">
+    <li>Con la celda vacía, registra la tara. Sube la carga por pasos hasta 20 kg (al menos 6 puntos de <strong>carga ascendente</strong>).</li>
+    <li>Baja la carga por los mismos puntos hasta 0 kg (al menos 5 puntos de <strong>carga descendente</strong>).</li>
+    <li>Analiza: se ajusta la recta, se obtiene el factor de calibración, la salida nominal, la no linealidad y la histéresis en % del fondo de escala.</li>
+  </ol>
+  <div class="bench">
+    <div class="card ctrls">
+      <div class="ctrl"><label for="l3-sp">Masa sobre la celda <output id="l3-spo"></output></label><input type="range" id="l3-sp" min="0" max="20" step="0.5" value="0"></div>
+      <p class="muted" id="l3-dir" style="margin:0;font-weight:700">Carga ascendente ↑</p>
+      <div class="row"><button class="btn gold" id="l3-rec">Registrar lectura</button><button class="btn" id="l3-an">Analizar datos</button><button class="btn sm" id="l3-clr">Borrar tabla</button></div>
+      <div class="lcd">
+        <span class="st" id="l3-st">Estabilizando…</span>
+        <div><span>Masa patrón</span><b id="l3-d1">—</b></div>
+        <div><span>HX711</span><b id="l3-d2">—</b></div>
+        <div><span>Sentido</span><b id="l3-d3">—</b></div>
+      </div>
+    </div>
+    <div class="card svgbox"><div id="l3-svg"></div></div>
+  </div>
+  <div class="tbl"><table><thead><tr><th class="num">#</th><th class="num">m (kg)</th><th class="num">Cuentas HX711</th><th class="num">Sentido</th><th></th></tr></thead><tbody id="l3-tb"></tbody></table></div>
+  <div id="l3-res" class="results"></div>
+  <h3>Preguntas orientadoras</h3>
+  <ol class="qs">
+    <li>¿Qué factor de calibración (cuentas/kg) y qué tara obtuviste? Escribe la línea de código que convierte las cuentas a kilogramos.</li>
+    <li>¿Cuál es la salida nominal de tu celda en mV/V? ¿Está dentro del 2 mV/V ± 10 % que suelen especificar los fabricantes?</li>
+    <li>¿Cuánto valen la no linealidad y la histéresis en % FS? ¿Cuál domina y en qué zona de la carga?</li>
+    <li>¿Cuántos gramos representa una cuenta? ¿Qué resolución práctica tendría una báscula con esta celda si el ruido es de ±40 cuentas?</li>
+  </ol>
+  <div class="ctrl"><label for="l3-txt">Análisis de resultados de la práctica 3</label><textarea id="l3-txt" placeholder="Interpreta tus resultados respondiendo las preguntas orientadoras."></textarea></div>
+</section>
+
+<!-- ================= EJERCICIOS ================= -->
+<section class="page" id="ejer" data-sec="VII · Ejercicios" data-title="Ejercicios con verificación" hidden>
+  <p class="eyebrow">Sección VII · Ejercicios</p>
+  <h1>Ejercicios con verificación</h1>
+  <p class="lead">Escribe tu respuesta con la coma o el punto como separador decimal y pulsa «Verificar». Se acepta una pequeña tolerancia por redondeo. El puntaje se incluye en el informe.</p>
+  <div class="row"><span class="pill" id="ex-score">0 / 12 correctos</span><button class="btn sm" id="ex-reset">Reiniciar respuestas</button></div>
+
+  <div class="ex" data-k="e1" data-tol="0.005"><div class="hd"><b>EJERCICIO 1 · Potenciómetro</b><span class="fb"></span></div>
+    <p>Un potenciómetro lineal de 270° está alimentado con 5 V. ¿Qué tensión entrega el cursor cuando el eje ha girado 81°?</p>
+    <div class="ans-row"><input type="text" inputmode="decimal" aria-label="Respuesta"><span class="unit">V</span><button class="btn sm">Verificar</button></div>
+    <details><summary>Ver solución</summary><div>\(V = 5 \cdot 81/270 = \) <b class="ans" data-k="e1"></b> V.</div></details></div>
+
+  <div class="ex" data-k="e2" data-tol="0.5"><div class="hd"><b>EJERCICIO 2 · LVDT</b><span class="fb"></span></div>
+    <p>Un LVDT de 30 mV/V por mm se excita con 3 V. ¿Qué salida entrega con el núcleo desplazado 4 mm?</p>
+    <div class="ans-row"><input type="text" inputmode="decimal" aria-label="Respuesta"><span class="unit">mV</span><button class="btn sm">Verificar</button></div>
+    <details><summary>Ver solución</summary><div>\(V_o = 30 \cdot 3 \cdot 4 = \) <b class="ans" data-k="e2"></b> mV.</div></details></div>
+
+  <div class="ex" data-k="e3" data-tol="0.001"><div class="hd"><b>EJERCICIO 3 · Encoder</b><span class="fb"></span></div>
+    <p>Un encoder de 500 PPR se lee en cuadratura (cuatro flancos). ¿Cuál es su resolución angular?</p>
+    <div class="ans-row"><input type="text" inputmode="decimal" aria-label="Respuesta"><span class="unit">°</span><button class="btn sm">Verificar</button></div>
+    <details><summary>Ver solución</summary><div>\(360° / (4 \cdot 500) = \) <b class="ans" data-k="e3"></b>°.</div></details></div>
+
+  <div class="ex" data-k="e4" data-tol="0.5"><div class="hd"><b>EJERCICIO 4 · Método de frecuencia</b><span class="fb"></span></div>
+    <p>El encoder anterior entrega 5000 cuentas (cuadratura) en una ventana de 100 ms. ¿A qué velocidad gira?</p>
+    <div class="ans-row"><input type="text" inputmode="decimal" aria-label="Respuesta"><span class="unit">rpm</span><button class="btn sm">Verificar</button></div>
+    <details><summary>Ver solución</summary><div>\(n = 60 \cdot 5000 / (2000 \cdot 0{,}1) = \) <b class="ans" data-k="e4"></b> rpm.</div></details></div>
+
+  <div class="ex" data-k="e5" data-tol="0.1"><div class="hd"><b>EJERCICIO 5 · Método de período</b><span class="fb"></span></div>
+    <p>Un encoder de 360 PPR produce en el canal A un período de 500 µs. ¿A qué velocidad gira el eje?</p>
+    <div class="ans-row"><input type="text" inputmode="decimal" aria-label="Respuesta"><span class="unit">rpm</span><button class="btn sm">Verificar</button></div>
+    <details><summary>Ver solución</summary><div>\(n = 60 / (360 \cdot 500\times10^{-6}) = \) <b class="ans" data-k="e5"></b> rpm.</div></details></div>
+
+  <div class="ex" data-k="e6" data-tol="0.01"><div class="hd"><b>EJERCICIO 6 · Tacogenerador</b><span class="fb"></span></div>
+    <p>Un tacogenerador de 7 V por cada 1000 rpm está acoplado a un motor que gira a 1800 rpm. ¿Qué tensión entrega?</p>
+    <div class="ans-row"><input type="text" inputmode="decimal" aria-label="Respuesta"><span class="unit">V</span><button class="btn sm">Verificar</button></div>
+    <details><summary>Ver solución</summary><div>\(V = 7 \cdot 1{,}8 = \) <b class="ans" data-k="e6"></b> V.</div></details></div>
+
+  <div class="ex" data-k="e7" data-tol="0.002"><div class="hd"><b>EJERCICIO 7 · Galga</b><span class="fb"></span></div>
+    <p>Una galga de 350 Ω con \(GF = 2{,}1\) está sometida a 500 µε. ¿Cuánto cambia su resistencia?</p>
+    <div class="ans-row"><input type="text" inputmode="decimal" aria-label="Respuesta"><span class="unit">Ω</span><button class="btn sm">Verificar</button></div>
+    <details><summary>Ver solución</summary><div>\(\Delta R = 350 \cdot 2{,}1 \cdot 500\times10^{-6} = \) <b class="ans" data-k="e7"></b> Ω.</div></details></div>
+
+  <div class="ex" data-k="e8" data-tol="0.01"><div class="hd"><b>EJERCICIO 8 · Cuarto de puente</b><span class="fb"></span></div>
+    <p>Con la aproximación lineal, ¿qué tensión entrega un cuarto de puente excitado con 5 V, con una galga de \(GF = 2\) a 1000 µε?</p>
+    <div class="ans-row"><input type="text" inputmode="decimal" aria-label="Respuesta"><span class="unit">mV</span><button class="btn sm">Verificar</button></div>
+    <details><summary>Ver solución</summary><div>\(V_o = 5 \cdot 2 \cdot 1000\times10^{-6} / 4 = \) <b class="ans" data-k="e8"></b> mV.</div></details></div>
+
+  <div class="ex" data-k="e9" data-tol="0.01"><div class="hd"><b>EJERCICIO 9 · Celda de carga</b><span class="fb"></span></div>
+    <p>Una celda de 50 kg y 2 mV/V se excita con 5 V. ¿Qué tensión entrega con 20 kg?</p>
+    <div class="ans-row"><input type="text" inputmode="decimal" aria-label="Respuesta"><span class="unit">mV</span><button class="btn sm">Verificar</button></div>
+    <details><summary>Ver solución</summary><div>\(V = 2 \cdot 5 \cdot 20/50 = \) <b class="ans" data-k="e9"></b> mV.</div></details></div>
+
+  <div class="ex" data-k="e10" data-tol="20"><div class="hd"><b>EJERCICIO 10 · HX711</b><span class="fb"></span></div>
+    <p>El HX711 con AVDD = 5 V y ganancia 128 recibe 4 mV. ¿Cuántas cuentas entrega?</p>
+    <div class="ans-row"><input type="text" inputmode="decimal" aria-label="Respuesta"><span class="unit">cuentas</span><button class="btn sm">Verificar</button></div>
+    <details><summary>Ver solución</summary><div>Escala completa: \(0{,}5 \cdot 5/128 = 19{,}53\) mV; \(N = (4/19{,}53)\cdot 2^{23} = \) <b class="ans" data-k="e10"></b> cuentas.</div></details></div>
+
+  <div class="ex" data-k="e11" data-tol="0.5"><div class="hd"><b>EJERCICIO 11 · Variador</b><span class="fb"></span></div>
+    <p>Un motor de 4 polos se alimenta desde un variador a 45 Hz. ¿Cuál es su velocidad síncrona?</p>
+    <div class="ans-row"><input type="text" inputmode="decimal" aria-label="Respuesta"><span class="unit">rpm</span><button class="btn sm">Verificar</button></div>
+    <details><summary>Ver solución</summary><div>\(n_s = 120 \cdot 45 / 4 = \) <b class="ans" data-k="e11"></b> rpm.</div></details></div>
+
+  <div class="ex" data-k="e12" data-tol="0.005"><div class="hd"><b>EJERCICIO 12 · Banda transportadora</b><span class="fb"></span></div>
+    <p>El rotor gira a 1710 rpm, la reducción es 20:1 y el tambor mide 0,30 m. ¿A qué velocidad avanza la banda?</p>
+    <div class="ans-row"><input type="text" inputmode="decimal" aria-label="Respuesta"><span class="unit">m/s</span><button class="btn sm">Verificar</button></div>
+    <details><summary>Ver solución</summary><div>\(v = (1710/20) \cdot \pi \cdot 0{,}30 / 60 = \) <b class="ans" data-k="e12"></b> m/s.</div></details></div>
+</section>
+
+<!-- ================= ESTRUCTURA INFORME ================= -->
+<section class="page" id="infest" data-sec="VIII · Informe" data-title="Estructura y evaluación del informe" hidden>
+  <p class="eyebrow">Sección VIII · Informe</p>
+  <h1>Estructura y evaluación del informe</h1>
+  <p class="lead">El informe se entrega en formato de artículo técnico, en máximo ocho páginas. Incluye las prácticas de tu estación electiva; las demás son opcionales. El generador arma el documento con tus datos, tablas y gráficas.</p>
+  <h2>Estructura</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Sección</th><th>Contenido esperado</th></tr></thead>
+    <tbody>
+      <tr><td>1. Resumen</td><td>Qué se midió, cómo y cuál fue el resultado principal, en 150 palabras.</td></tr>
+      <tr><td>2. Objetivos</td><td>General y específicos de la estación elegida.</td></tr>
+      <tr><td>3. Marco teórico</td><td>Principio del sensor, acondicionamiento (demodulación, cuadratura o puente) y lectura con el microcontrolador, con citas.</td></tr>
+      <tr><td>4. Montaje y procedimiento</td><td>Diagrama del montaje con simbología ISA-5.1 y descripción de los pasos.</td></tr>
+      <tr><td>5. Resultados</td><td>Tablas de datos, parámetros ajustados con sus unidades y gráficas con ejes rotulados.</td></tr>
+      <tr><td>6. Análisis</td><td>Respuesta a las preguntas orientadoras y comparación con las hojas de datos.</td></tr>
+      <tr><td>7. Conclusiones</td><td>Entre tres y cinco conclusiones que se deduzcan de tus datos.</td></tr>
+      <tr><td>8. Referencias</td><td>Normas y textos consultados, en formato IEEE o APA.</td></tr>
+    </tbody>
+  </table></div>
+  <h2>Rúbrica de evaluación</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Criterio</th><th class="num">Peso</th><th>Desempeño superior</th></tr></thead>
+    <tbody>
+      <tr><td>Toma y presentación de datos</td><td class="num">20 %</td><td>Lecturas suficientes y bien distribuidas: todo el recorrido del LVDT, bajas y altas velocidades, carga ascendente y descendente.</td></tr>
+      <tr><td>Ajuste de modelos y cálculos</td><td class="num">25 %</td><td>Sensibilidad, rango lineal, PPR, factor de calibración y mV/V correctos, con R² y unidades.</td></tr>
+      <tr><td>Análisis e interpretación</td><td class="num">25 %</td><td>Explica la no linealidad, el cruce de los métodos de velocidad, la histéresis y la resolución.</td></tr>
+      <tr><td>Ejercicios</td><td class="num">15 %</td><td>Al menos 10 de 12 ejercicios correctos, con procedimiento.</td></tr>
+      <tr><td>Redacción y formato</td><td class="num">15 %</td><td>Texto técnico claro, figuras numeradas y citadas, diagrama con simbología ISA-5.1, referencias completas.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ================= GENERADOR ================= -->
+<section class="page" id="informe" data-sec="VIII · Informe" data-title="Generador del informe" hidden>
+  <p class="eyebrow">Sección VIII · Informe</p>
+  <h1>Generador del informe</h1>
+  <p class="lead">El informe reúne tu identificación, las tablas de las prácticas que hayas hecho, los parámetros ajustados, las gráficas, tu análisis y el puntaje de los ejercicios. Descárgalo en PDF o cópialo como texto.</p>
+  <div class="grid2">
+    <div class="ctrl"><label for="inf-res">Resumen</label><textarea id="inf-res" placeholder="Qué se midió, cómo y cuál fue el resultado principal."></textarea></div>
+    <div class="ctrl"><label for="inf-con">Conclusiones generales</label><textarea id="inf-con" placeholder="Entre tres y cinco conclusiones basadas en tus datos."></textarea></div>
+  </div>
+  <div class="row" style="margin:16px 0 6px"><button class="btn gold" id="inf-pdf">Descargar informe en PDF</button><button class="btn" id="inf-gen">Actualizar borrador</button><button class="btn" id="inf-copy">Copiar informe (texto)</button><button class="btn" id="inf-csv">Copiar datos (CSV)</button></div>
+  <p class="muted" style="font-size:13px;margin:0 0 16px">El PDF incluye portada, tablas numeradas, las gráficas de las prácticas realizadas, tu análisis y el puntaje de los ejercicios.</p>
+  <div class="paper" id="paper"></div>
+</section>
+
+<!-- ================= REFERENCIAS ================= -->
+<section class="page" id="refs" data-sec="VIII · Informe" data-title="Referencias" hidden>
+  <p class="eyebrow">Referencias</p>
+  <h1>Referencias</h1>
+  <ol>
+    <li>OIML R 60:2021. <em>Metrological regulation for load cells</em>. Organización Internacional de Metrología Legal.</li>
+    <li>ANSI/ISA-5.1-2009. <em>Instrumentation Symbols and Identification</em>. International Society of Automation.</li>
+    <li>Creus Solé, A. (2010). <em>Instrumentación industrial</em> (8.ª ed.). Marcombo.</li>
+    <li>Pallás Areny, R. (2003). <em>Sensores y acondicionadores de señal</em> (4.ª ed.). Marcombo.</li>
+    <li>Doebelin, E. O. (2004). <em>Sistemas de medición e instrumentación: diseño y aplicación</em>. McGraw-Hill.</li>
+    <li>Analog Devices. <em>AD598: LVDT Signal Conditioner</em>. Hoja de datos.</li>
+    <li>Avia Semiconductor. <em>HX711: 24-Bit Analog-to-Digital Converter for Weigh Scales</em>. Hoja de datos.</li>
+    <li>Fraden, J. (2016). <em>Handbook of Modern Sensors</em> (5.ª ed.). Springer.</li>
+  </ol>
+  <div class="callout"><b>Nota técnica</b><p>El LVDT se modela con una salida lineal más un término de cuarto orden que reproduce la curvatura de los extremos. El puente usa las ecuaciones exactas de cuarto de puente y las lineales de medio y puente completo. La celda de carga incluye una no linealidad en arco y una histéresis que depende del sentido de la carga.</p></div>
+</section>
+
+  <nav class="pager" id="pager"></nav>
+  </div><!-- /book -->
+</div><!-- /main -->
+</div><!-- /app -->
+<script src="js/lib/jspdf.umd.min.js"></script>
+<script src="js/lib/jspdf.plugin.autotable.min.js"></script>
+<script src="js/mathjax-config.js"></script>
+<script src="js/lib/tex-svg.js" async></script>
+<script src="js/core.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
